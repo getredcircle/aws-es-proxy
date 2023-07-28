@@ -17,10 +17,9 @@ import (
 	"strings"
 	"time"
 
-	// log "github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/aws/signer/v4"
+	v4 "github.com/aws/aws-sdk-go/aws/signer/v4"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -62,11 +61,11 @@ func newProxy(args ...interface{}) *proxy {
 	}
 
 	return &proxy{
-		endpoint:  args[0].(string),
-		verbose:   args[1].(bool),
-		prettify:  args[2].(bool),
-		logtofile: args[3].(bool),
-		nosignreq: args[4].(bool),
+		endpoint:   args[0].(string),
+		verbose:    args[1].(bool),
+		prettify:   args[2].(bool),
+		logtofile:  args[3].(bool),
+		nosignreq:  args[4].(bool),
 		httpClient: &client,
 	}
 }
@@ -273,6 +272,10 @@ func addHeaders(src, dest http.Header) {
 	if val, ok := src["Content-Type"]; ok {
 		dest.Add("Content-Type", val[0])
 	}
+
+	if val, ok := src["Osd-Version"]; ok {
+		dest.Add("Osd-Version", val[0])
+	}
 }
 
 // Signer.Sign requires a "seekable" body to sum body's sha256
@@ -304,7 +307,7 @@ func main() {
 		listenAddress string
 		fileRequest   *os.File
 		fileResponse  *os.File
-		timeout int
+		timeout       int
 		err           error
 	)
 
