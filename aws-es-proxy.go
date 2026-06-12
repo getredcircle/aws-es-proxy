@@ -126,7 +126,7 @@ func (p *proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	requestStarted := time.Now()
 	dump, err := httputil.DumpRequest(r, true)
 	if err != nil {
-		log.Fatalln("error while dumping request. Error: ", err.Error())
+		log.Println("error while dumping request. Error: ", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -139,7 +139,7 @@ func (p *proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	req, err := http.NewRequest(r.Method, ep.String(), r.Body)
 	if err != nil {
-		log.Fatalln("error creating new request. ", err.Error())
+		log.Println("error creating new request. ", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -158,7 +158,7 @@ func (p *proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := p.httpClient.Do(req)
 	if err != nil {
-		log.Fatalln(err.Error())
+		log.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -179,7 +179,7 @@ func (p *proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Send response back to requesting client
 	body := bytes.Buffer{}
 	if _, err := io.Copy(&body, resp.Body); err != nil {
-		log.Fatalln(err.Error())
+		log.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	w.WriteHeader(resp.StatusCode)
